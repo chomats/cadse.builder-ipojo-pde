@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Cadse builder ant for Pde
+Bundle-SymbolicName: fr.imag.adele.cadse.builder.pde;singleton:=true
+Bundle-Version: 2.2.1.qualifier
+Bundle-Vendor: ADELE/LIG/GRENOBLE/FRANCE
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Import-Package: org.apache.tools.ant

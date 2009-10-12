@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry excluding="org/objectweb/asm/optimizer/|org/objectweb/asm/signature/|org/objectweb/asm/tree/analysis/|org/objectweb/asm/util/|org/objectweb/asm/xml/|org/objectweb/asm/commons/Remapper.java|org/objectweb/asm/commons/RemappingSignatureAdapter.java|org/objectweb/asm/commons/RemappingAnnotationAdapter.java|org/objectweb/asm/commons/RemappingClassAdapter.java|org/objectweb/asm/commons/RemappingFieldAdapter.java|org/objectweb/asm/commons/RemappingMethodAdapter.java|org/objectweb/asm/commons/SimpleRemapper.java" kind="src" path="src/main/java-ant"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<extension
+          point="org.eclipse.ant.core.antTasks">
+       <antTask
+             class="fr.imag.adele.cadse.builder.pde.ant.IPojoPDETask"
+             eclipseRuntime="true"
+             headless="true"
+             library="cadse-builder-ant.jar"
+             name="ipojo.pde"/>
+    </extension>
+    <extension
+          point="org.eclipse.ant.core.extraClasspathEntries">
+       <extraClasspathEntry
+             eclipseRuntime="true"
+             headless="true"
+             library="cadse-builder-ant.jar"/>
+    </extension>
+</plugin>
