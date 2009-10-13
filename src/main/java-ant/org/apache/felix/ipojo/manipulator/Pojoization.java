@@ -58,15 +58,15 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 /**
- * Pojoization allows creating an iPOJO bundle from a "normal" bundle.  
+ * Pojoization allows creating an iPOJO bundle from a "normal" bundle.
  * @author <a href="mailto:dev@felix.apache.org">Felix Project Team</a>
  */
 public class Pojoization {
-    
+
     /**
      * iPOJO Imported Package Version.
      */
-    public static final String IPOJO_PACKAGE_VERSION = " 1.2.0";
+    public static final String IPOJO_PACKAGE_VERSION = " 1.4.0";
 
     /**
      * List of component types.
@@ -76,7 +76,7 @@ public class Pojoization {
     /**
      * Metadata (in internal format).
      */
-    protected Element[] m_metadata = new Element[0];
+    private Element[] m_metadata = new Element[0];
 
     /**
      * Errors which occur during the manipulation.
@@ -100,9 +100,10 @@ public class Pojoization {
 
     /**
      * Flag describing if we need or not compute annotations.
+     * By default, compute the annotations.
      */
-    private boolean m_ignoreAnnotations = true;
-    
+    private boolean m_ignoreAnnotations;
+
     /**
      * Flag describing if we need or not use local XSD files
      * (i.e. use the {@link SchemaResolver} or not).
@@ -145,14 +146,14 @@ public class Pojoization {
     public List getErrors() {
         return m_errors;
     }
-    
+
     /**
      * Activates annotation processing.
      */
-    public void setAnnotationProcessing() {
-        m_ignoreAnnotations = false;
+    public void disableAnnotationProcessing() {
+        m_ignoreAnnotations = true;
     }
-    
+
     /**
      * Activates the entity resolver loading
      * XSD files from the classloader.
@@ -160,14 +161,14 @@ public class Pojoization {
     public void setUseLocalXSD() {
         m_ignoreLocalXSD = false;
     }
-    
+
     /**
      * Manipulates an input bundle.
      * This method creates an iPOJO bundle based on the given metadata file.
      * The original and final bundles must be different.
      * @param in the original bundle.
      * @param out the final bundle.
-     * @param metadata the iPOJO metadata input stream. 
+     * @param metadata the iPOJO metadata input stream.
      */
     public void pojoization(File in, File out, InputStream metadata) {
         parseXMLMetadata(metadata);
@@ -206,11 +207,11 @@ public class Pojoization {
      * The original and final bundles must be different.
      * @param in the original bundle.
      * @param out the final bundle.
-     * @param metadataFile the iPOJO metadata file (XML). 
+     * @param metadataFile the iPOJO metadata file (XML).
      */
     public void pojoization(File in, File out, File metadataFile) {
         // Get the metadata.xml location if not null
-       if (metadataFile != null) {
+        if (metadataFile != null) {
             parseXMLMetadata(metadataFile);
         }
 
@@ -222,7 +223,7 @@ public class Pojoization {
         }
 
         // Get the list of declared component
-         computeDeclaredComponents();
+        computeDeclaredComponents();
 
         // Start the manipulation
         manipulateJarFile(out);
@@ -279,6 +280,7 @@ public class Pojoization {
                 error("The component " + ci.m_classname + " is declared but not in the bundle");
             }
         }
+
     }
 
     /**
@@ -292,10 +294,12 @@ public class Pojoization {
         if (xml.isAnnotated()) {
             boolean toskip = false;
             for (int i = 0; !toskip && i < m_metadata.length; i++) {
-                if (m_metadata[i].containsAttribute("name")
+                if (! m_metadata[i].getName().equals("instance") // Only if its a component type definition, 
+                                                                 // so skip instance declaration 
+                        && m_metadata[i].containsAttribute("name")
                         && m_metadata[i].getAttribute("name").equalsIgnoreCase(xml.getElem().getAttribute("name"))) {
                     toskip = true;
-                    warn("The component " + xml.getElem().getAttribute("name") + " is overriden by the metadata file");
+                    warn("The component type " + xml.getElem().getAttribute("name") + " is overriden by the metadata file");
                 }
             }
             if (!toskip) {
@@ -562,8 +566,8 @@ public class Pojoization {
             } else if (files[i].getName().endsWith(".class")) {
                 classes.add(computeRelativePath(files[i].getAbsolutePath()));
             }
-            }
         }
+    }
 
 //    /**
 //     * Manipulates an inner class.
@@ -603,7 +607,7 @@ public class Pojoization {
         String root = m_dir.getAbsolutePath();
         return absolutePath.substring(root.length() + 1);
     }
-    
+
     /**
      * Manipulates an inner class.
      * @param clazz input stream on the inner file to manipulate
@@ -623,11 +627,11 @@ public class Pojoization {
         // Remove '.class' from class name.
         InnerClassManipulator man = new InnerClassManipulator(ci.m_classname.substring(0, ci.m_classname.length() - 6), ci.m_fields);
         byte[] out = man.manipulate(in);
-        
+
         m_classes.put(cn, out);
-        
+
     }
-    
+
     /**
      * Gets the manifest.
      * This method handles Jar and directories.
@@ -657,8 +661,8 @@ public class Pojoization {
             }
         }
     }
-    
-   /**
+
+    /**
      * Create the manifest.
      * Set the bundle imports and iPOJO-components clauses
      * @return the generated manifest.
@@ -678,7 +682,6 @@ public class Pojoization {
         setCreatedBy(att); // Add iPOJO to the creators
         return mf;
     }
-
 
     /**
      * Manipulate a component class.
@@ -724,7 +727,7 @@ public class Pojoization {
      * Represent a component type to be manipulated or already manipulated.
      * @author <a href="mailto:felix-dev@incubator.apache.org">Felix Project Team</a>
      */
-    protected class ComponentInfo {
+    public class ComponentInfo {
         /**
          * Component Type metadata.
          */
@@ -739,12 +742,12 @@ public class Pojoization {
          * Is the class already manipulated.
          */
         boolean m_isManipulated;
-        
+
         /**
          * List of inner classes of the implementation class.
          */
         public List m_inners;
-        
+
         /**
          * Set of fields of the implementation class.
          */
@@ -760,7 +763,7 @@ public class Pojoization {
             this.m_componentMetadata = met;
             m_isManipulated = false;
         }
-        
+
         /**
          * Detects missing fields.
          * If a referenced field does not exist in the class
@@ -779,7 +782,7 @@ public class Pojoization {
                 }
             }
         }
-        
+
         /**
          * Looks for 'field' attribute in the given metadata.
          * @param list : discovered field (accumulator)
@@ -794,7 +797,7 @@ public class Pojoization {
                 computeReferredFields(list, metadata.getElements()[i]);
             }
         }
-        
+
     }
 
     /**
@@ -856,7 +859,7 @@ public class Pojoization {
         for (int i = 0; i < m_metadata.length; i++) {
             meta.append(buildManifestMetadata(m_metadata[i], new StringBuffer()));
         }
-        if (meta.length() != 0) { 
+        if (meta.length() != 0) {
             att.putValue("iPOJO-Components", meta.toString());
         }
     }
@@ -864,7 +867,7 @@ public class Pojoization {
     /**
      * Standard OSGi header parser. This parser can handle the format clauses ::= clause ( ',' clause ) + clause ::= name ( ';' name ) (';' key '=' value )
      * This is mapped to a Map { name => Map { attr|directive => value } }
-     * 
+     *
      * @param value : String to parse.
      * @return parsed map.
      */
@@ -905,7 +908,7 @@ public class Pojoization {
 
     /**
      * Print a standard Map based OSGi header.
-     * 
+     *
      * @param exports : map { name => Map { attribute|directive => value } }
      * @param allowedDirectives : list of allowed directives.
      * @return the clauses
@@ -913,7 +916,7 @@ public class Pojoization {
     public String printClauses(Map exports, String allowedDirectives) {
         StringBuffer sb = new StringBuffer();
         String del = "";
-        
+
         for (Iterator i = exports.entrySet().iterator(); i.hasNext();) {
             Map.Entry entry = (Map.Entry) i.next();
             String name = (String) entry.getKey();
@@ -987,16 +990,16 @@ public class Pojoization {
             XMLMetadataParser handler = new XMLMetadataParser();
             parser.setContentHandler(handler);
             parser.setFeature("http://xml.org/sax/features/validation",
-                    true); 
-            parser.setFeature("http://apache.org/xml/features/validation/schema", 
                     true);
-   
+            parser.setFeature("http://apache.org/xml/features/validation/schema",
+                    true);
+
             parser.setErrorHandler(handler);
-            
+
             if (! m_ignoreLocalXSD) {
                 parser.setEntityResolver(new SchemaResolver());
             }
-            
+
             InputSource is = new InputSource(stream);
             parser.parse(is);
             meta = handler.getMetadata();
@@ -1018,7 +1021,7 @@ public class Pojoization {
 
         m_metadata = meta;
     }
-    
+
     /**
      * Get packages referenced by component.
      * @return the list of referenced packages.
@@ -1042,7 +1045,7 @@ public class Pojoization {
 
     /**
      * Generate manipulation metadata.
-     * @param element : actual element. 
+     * @param element : actual element.
      * @param actual : actual manipulation metadata.
      * @return : given manipulation metadata + manipulation metadata of the given element.
      */

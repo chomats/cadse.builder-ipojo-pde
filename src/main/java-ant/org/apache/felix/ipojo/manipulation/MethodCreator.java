@@ -120,6 +120,18 @@ public class MethodCreator extends ClassAdapter implements Opcodes {
      * method.
      */
     private List m_visitedMethods = new ArrayList();
+    
+    /**
+     * Set to <code>true</code> when a suitable constructor
+     * is found. If not set to <code>true</code> at the end
+     * of the visit, the manipulator injects a constructor.
+     */
+    private boolean m_foundSuitableConstructor = false;
+
+    /**
+     * Name of the super class.
+     */
+    private String m_superclass;
 
     /**
      * Constructor.
@@ -148,6 +160,7 @@ public class MethodCreator extends ClassAdapter implements Opcodes {
      */
     public void visit(int version, int access, String name, String signature, String superName, String[] interfaces) {
         m_owner = name;
+        m_superclass = superName;
         addPOJOInterface(version, access, name, signature, superName, interfaces);
         addIMField();
     }
@@ -179,8 +192,10 @@ public class MethodCreator extends ClassAdapter implements Opcodes {
             Type[] args = Type.getArgumentTypes(desc);
             if (args.length == 0) {
                 generateEmptyConstructor(access, signature, exceptions, md.getAnnotations());
+                m_foundSuitableConstructor = true;
             } else if (args.length == 1 && args[0].getClassName().equals("org.osgi.framework.BundleContext")) {
                 generateBCConstructor(access, signature, exceptions, md.getAnnotations());
+                m_foundSuitableConstructor = true;
             } else {
                 // Do nothing, the constructor does not match.
                 return cv.visitMethod(access, name, desc, signature, exceptions);
@@ -199,7 +214,11 @@ public class MethodCreator extends ClassAdapter implements Opcodes {
         if ((access & ACC_STATIC) == ACC_STATIC) { return super.visitMethod(access, name, desc, signature, exceptions); }
 
         MethodDescriptor md = getMethodDescriptor(name, desc);
-        generateMethodHeader(access, name, desc, signature, exceptions, md.getAnnotations());
+        if (md == null) {
+            generateMethodHeader(access, name, desc, signature, exceptions, new ArrayList(0));
+        } else {
+            generateMethodHeader(access, name, desc, signature, exceptions, md.getAnnotations());
+        }
         
         String id = generateMethodFlag(name, desc);
         if (! m_methodFlags.contains(id)) {
@@ -535,11 +554,41 @@ public class MethodCreator extends ClassAdapter implements Opcodes {
 
         // Add the getComponentInstance
         createGetComponentInstanceMethod();
+        
+        // Need to inject a constructor?
+        if (! m_foundSuitableConstructor) { // No adequate constructor, create one.
+            createSimpleConstructor();
+        }
 
         m_methods.clear();
         m_methodFlags.clear();
 
         cv.visitEnd();
+    }
+
+    /**
+     * Creates a simple constructor with an instance manager
+     * in argument if no suitable constructor is found during
+     * the visit.
+     */
+    private void createSimpleConstructor() {
+        MethodVisitor mv = cv.visitMethod(ACC_PUBLIC, "<init>",
+                "(Lorg/apache/felix/ipojo/InstanceManager;)V", null, null);
+        mv.visitCode();
+
+        // Super call
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitMethodInsn(INVOKESPECIAL, m_superclass, "<init>", "()V");
+
+        // Call set instance manager
+        mv.visitVarInsn(ALOAD, 0);
+        mv.visitVarInsn(ALOAD, 1);
+        mv.visitMethodInsn(INVOKEVIRTUAL, m_owner, "_setInstanceManager",
+                "(Lorg/apache/felix/ipojo/InstanceManager;)V");
+
+        mv.visitInsn(RETURN);
+        mv.visitMaxs(0, 0);
+        mv.visitEnd();
     }
 
     /**

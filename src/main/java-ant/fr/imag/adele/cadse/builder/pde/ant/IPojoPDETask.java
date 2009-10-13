@@ -122,7 +122,7 @@ public class IPojoPDETask extends Task {
         
         Pojoization pojo = new Pojoization();
         if (! m_ignoreAnnotations) {
-            pojo.setAnnotationProcessing();
+            pojo.disableAnnotationProcessing();
         }
         if (! m_ignoreLocalXSD) {
             pojo.setUseLocalXSD();
