@@ -1,0 +1,35 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>fr.imag.adele.cadse</groupId>
+  <artifactId>fr.imag.adele.cadse.builder.pde</artifactId>
+  <packaging>bundle</packaging>
+  <name>fr.imag.adele.cadse.builder.pde</name>
+  <version>2.3.0-SNAPSHOT</version>
+  <description>Cadse builder ant for Pde</description>
+  <parent>
+  	<artifactId>fr.imag.adele.cadse.parent</artifactId>
+  	<groupId>fr.imag.adele.cadse</groupId>
+  	<version>2.3.0-SNAPSHOT</version>
+  </parent>
+  <build>
+		<finalName>${project.name}_${project.version}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<manifestLocation>META-INF</manifestLocation>
+					<instructions>						
+						<Import-Package>org.apache.tools.ant</Import-Package>
+						<Export-Package></Export-Package>
+						<Include-Resource>
+						  cadse-builder-ant.jar=../fr.imag.adele.cadse.builder.pde.ant/target/cadse-builder-ant.jar,
+			              plugin.xml=plugin.xml
+			            </Include-Resource>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
