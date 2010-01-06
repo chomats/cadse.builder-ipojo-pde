@@ -10,6 +10,7 @@
   	<artifactId>fr.imag.adele.cadse.parent</artifactId>
   	<groupId>fr.imag.adele.cadse</groupId>
   	<version>2.3.0-SNAPSHOT</version>
+  	<relativePath>../fr.imag.adele.cadse.parent</relativePath>
   </parent>
   <build>
 		<finalName>${project.name}_${project.version}</finalName>
