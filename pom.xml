@@ -13,14 +13,12 @@
   	<relativePath>../fr.imag.adele.cadse.parent</relativePath>
   </parent>
   <build>
-		<finalName>${project.name}_${project.version}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
-					<manifestLocation>META-INF</manifestLocation>
 					<instructions>						
 						<Import-Package>org.apache.tools.ant</Import-Package>
 						<Export-Package></Export-Package>
