@@ -20,7 +20,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>						
-						<Import-Package>org.apache.tools.ant</Import-Package>
+						<Import-Package>org.apache.tools.ant, *</Import-Package>
 						<Export-Package></Export-Package>
 						<Include-Resource>
 						  cadse-builder-ant.jar=../fr.imag.adele.cadse.builder.pde.ant/target/cadse-builder-ant.jar,
