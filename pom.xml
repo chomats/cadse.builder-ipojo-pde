@@ -14,6 +14,32 @@
   </parent>
   <build>
 		<plugins>
+		    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>fr.imag.adele.cadse</groupId>
+  					<artifactId>fr.imag.adele.cadse.builder.pde.ant</artifactId>
+  					<version>2.3.0-SNAPSHOT</version>
+  					<type>jar</type>
+                  <outputDirectory>target</outputDirectory>
+                  <destFileName>cadse-builder-ant.jar</destFileName>
+                </artifactItem>
+              </artifactItems>
+              <!-- other configurations here -->
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
@@ -23,7 +49,7 @@
 						<Import-Package>org.apache.tools.ant, *</Import-Package>
 						<Export-Package></Export-Package>
 						<Include-Resource>
-						  cadse-builder-ant.jar=../fr.imag.adele.cadse.builder.pde.ant/target/cadse-builder-ant.jar,
+						  cadse-builder-ant.jar=target/cadse-builder-ant.jar,
 			              plugin.xml=plugin.xml
 			            </Include-Resource>
 					</instructions>
