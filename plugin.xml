@@ -4,17 +4,17 @@
 	<extension
           point="org.eclipse.ant.core.antTasks">
        <antTask
-             class="fr.imag.adele.cadse.builder.pde.ant.IPojoPDETask"
+             class="org.apache.felix.ipojo.task.IPojoTask"
              eclipseRuntime="true"
              headless="true"
-             library="cadse-builder-ant.jar"
-             name="ipojo.pde"/>
+             library="ipojo-builder-ant.jar"
+             name="ipojo"/>
     </extension>
     <extension
           point="org.eclipse.ant.core.extraClasspathEntries">
        <extraClasspathEntry
              eclipseRuntime="true"
              headless="true"
-             library="cadse-builder-ant.jar"/>
+             library="ipojo-builder-ant.jar"/>
     </extension>
 </plugin>

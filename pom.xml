@@ -28,12 +28,12 @@
 						<configuration>
 							<artifactItems>
 								<artifactItem>
-									<groupId>fr.imag.adele.cadse</groupId>
-									<artifactId>fr.imag.adele.cadse.builder.pde.ant</artifactId>
-									<version>2.3.0</version>
+									<groupId>org.apache.felix</groupId>
+									<artifactId>org.apache.felix.ipojo.ant</artifactId>
+									<version>1.6.0</version>
 									<type>jar</type>
 									<outputDirectory>target</outputDirectory>
-									<destFileName>cadse-builder-ant.jar</destFileName>
+									<destFileName>ipojo-builder-ant.jar</destFileName>
 								</artifactItem>
 							</artifactItems>
 							<!-- other configurations here -->
@@ -50,7 +50,7 @@
 						<Import-Package>org.apache.tools.ant, *</Import-Package>
 						<Export-Package></Export-Package>
 						<Include-Resource>
-							cadse-builder-ant.jar=target/cadse-builder-ant.jar,
+							ipojo-builder-ant.jar=target/ipojo-builder-ant.jar,
 							plugin.xml=plugin.xml
 			            </Include-Resource>
 					</instructions>

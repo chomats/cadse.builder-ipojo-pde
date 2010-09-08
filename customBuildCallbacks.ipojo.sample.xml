@@ -82,7 +82,7 @@
 	<target name="post.compile.name">
 	</target>
 
-	<target name="post.compile.@dot">		<ipojo.pde directory="${basedir}" target="${target.folder}"/>	</target>
+	<target name="post.compile.@dot">		<ipojo directory="${target.folder}"/>	</target>
 
 	<!-- ===================================================================== -->
 	<!-- Steps to do after the compilation target <name>                       -->
